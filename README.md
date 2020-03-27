@@ -3,7 +3,7 @@
 
 ## OMÓWIENIE
 
-Celem projektu jest projekt oraz implementacja bazy danych fiszek do aplikacji do nauki metodą fiszek. Aplikacja posiada też możliwość udostępnienia gotowych zestawów innym użytkownikom, oraz raportowanie ewentualnych błędów autorowi.
+Celem projektu jest zaprojektowanie oraz implementacja aplikacji bazodanowej do nauki metodą fiszek. Aplikacja posiada też możliwość udostępnienia gotowych zestawów innym użytkownikom, oraz raportowanie ewentualnych błędów autorowi.
 
 
 ## SPECYFIKACJA
