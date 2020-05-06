@@ -1,8 +1,27 @@
-import datetime
+from datetime import timedelta, datetime
 from pandas import read_csv
 from mongoengine import *
 
 connect("flashcards")
+
+ANSWERS = {
+    "new": {
+        "Źle": timedelta(seconds=10 * 60),
+        "Dobrze": timedelta(days=1)
+    },
+    "seen": {
+        "Źle": timedelta(seconds=60 * 10),
+        "Trudne": timedelta(days=1),
+        "Dobrze": timedelta(days=2),
+        "Łatwe": timedelta(days=4)
+    },
+    "learnt": {
+        "Źle": timedelta(seconds=60 * 10),
+        "Trudne": timedelta(days=1),
+        "Dobrze": timedelta(days=7),
+        "Łatwe": timedelta(days=14)
+    }
+}
 
 
 class User(Document):
@@ -60,7 +79,19 @@ class CardStats(EmbeddedDocument):
         return len(self.history) > 0
 
     def is_learnt(self):
-        return len(self.history) >= 2 and self.history[0] > 0 and self.history[1] > 0
+        return len(self.history) >= 2 and self.history[0][1] is not "Źle" and self.history[1][1] is not "Źle"
+
+    def _get_state(self):
+        if not self.was_seen():
+            return "new"
+        elif not self.is_learnt():
+            return "seen"
+        else:
+            return "learnt"
+
+    def set_answer(self, answer):
+        self.history.append((self._get_state(), answer))
+        self.scheduled_for = datetime.now() + ANSWERS[self._get_state()][answer]
 
 
 class DeckStats(EmbeddedDocument):
