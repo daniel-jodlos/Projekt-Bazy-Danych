@@ -1,6 +1,5 @@
 from mongoengine import *
 from datetime import datetime, timedelta
-import enum
 
 
 UNSEEN = 0
@@ -68,6 +67,8 @@ class PrivateCard(SharedCard):
             self.state = SEEN
         if len(self.history) >= 2 and self.history[0].answer != "Źle" and self.history[1].answer != "Źle":
             self.state = LEARNT
+        if answer == 'Źle':
+            self.state = SEEN
 
     def get_shared_card(self):
         return SharedCard(self)
