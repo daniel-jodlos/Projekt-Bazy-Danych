@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime
 from mongoengine import *
-from model import Card
+from model.Card import Card
 
 connect("flashcards")
 
@@ -36,7 +36,7 @@ class CardStats(EmbeddedDocument):
         return len(self.history) > 0
 
     def is_learnt(self):
-        return len(self.history) >= 2 and self.history[0][1] is not "Źle" and self.history[1][1] is not "Źle"
+        return len(self.history) >= 2 and self.history[0][1] != "Źle" and self.history[1][1] != "Źle"
 
     def _get_state(self):
         if not self.was_seen():

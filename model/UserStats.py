@@ -1,10 +1,9 @@
 from mongoengine import *
-from model.CardStats import User
 from model.DeckStats import *
 
 
 class UserStats(Document):
-    user = ReferenceField(User)
+    user_id = ObjectIdField()
     deck_stats = EmbeddedDocumentListField(DeckStats)
 
     def import_deck(self, deck):

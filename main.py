@@ -1,8 +1,8 @@
 from math import ceil, floor
-
-from model import *
 import curses
 import curses.textpad
+
+from model.Deck import Deck
 
 
 def print_flashcard_question(fwindow, card):
@@ -32,15 +32,15 @@ def main(stdscr):
     curses.noecho()
 
     for card in deck.cards:
-        answer_window.clear()
         stdscr.refresh()
         print_flashcard_question(question_window, card)
         stdscr.getch()
         print_flashcard_answer(answer_window, card)
         stdscr.refresh()
         stdscr.getch()
+        answer_window.clear()
+        stdscr.refresh()
 
     stdscr.getch()
-
 
 curses.wrapper(main)

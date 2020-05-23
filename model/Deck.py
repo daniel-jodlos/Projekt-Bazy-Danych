@@ -1,6 +1,7 @@
 from mongoengine import *
 from pandas import read_csv
-from model import Card, User
+from model.Card import Card
+from model.User import User
 
 
 class Deck(Document):
