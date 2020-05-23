@@ -1,46 +1,32 @@
 from math import ceil, floor
 import curses
 import curses.textpad
+from model.User import *
 
-from model.Deck import Deck
+try:
+    user = login_user('danjod40@gmail.com')
+    print("Logged in as", end=' ')
+except Exception:
+    print("Registered as", end=' ')
+    user = register_user('danjod', 'danjod40@gmail.com')
+print('{user}\n\nYour decks:'.format(user=user))
 
+if len(user.decks) == 0:
+    deck_wizard = user.create_new_deck('random_deck')
+    deck_wizard.load_csv('example.csv')
+    deck_wizard.save()
 
-def print_flashcard_question(fwindow, card):
-    fwindow.clear()
-    _, x = fwindow.getmaxyx()
-    x = floor((x-len(card.question))/2)
-    fwindow.addstr(0, x, card.question)
-    fwindow.refresh()
+for deck in user.decks:
+    print('- {}'.format(deck))
 
+choice = int(input('\n\nWhich one do you choose in range[0-{}]? '.format(len(user.decks) - 1)))
+chosen_deck = user.decks[choice]
 
-def print_flashcard_answer(awindow, card):
-    awindow.clear()
-    _, x = awindow.getmaxyx()
-    awindow.addstr(0, floor((x-len(card.answer))/2), card.answer)
-    awindow.refresh()
+for card in chosen_deck.get_cards_package_for_today(10):
+    print('{}'.format(card.question))
+    print('\nPossible answers:\n - {}\n'.format('\n - '.join(card.get_possible_answers())))
+    card.set_answer(list(card.get_possible_answers())[1])
 
+user.save()
 
-def main(stdscr):
-    stdscr.clear()
-    y, x = stdscr.getmaxyx()
-    ncols = x
-    nlines = ceil(100/x)
-    question_window = curses.newwin(nlines, ncols, 0, 0)
-    answer_window = curses.newwin(ceil(200/x), ncols, nlines+1, 0)
-    stdscr.refresh()
-    deck = Deck.objects[0]
-    curses.noecho()
-
-    for card in deck.cards:
-        stdscr.refresh()
-        print_flashcard_question(question_window, card)
-        stdscr.getch()
-        print_flashcard_answer(answer_window, card)
-        stdscr.refresh()
-        stdscr.getch()
-        answer_window.clear()
-        stdscr.refresh()
-
-    stdscr.getch()
-
-curses.wrapper(main)
+# curses.wrapper(main)
