@@ -36,11 +36,6 @@ Fiszka to pojedynczy zestaw: pytanie, możliwe odpowiedzi, poprawna odpowiedź o
 Historia nauki jest powiązana z użytkownikiem, oraz zestawem. Dla każdej fiszki zapisuje ilość oraz czasy ostatnich poprawnych i błędnych odpowiedzi.
 
 
-### Zgłoszenia błędów
-
-Są to wiadomości tekstowe o długości do kilku tysięcy znaków, przypisane do konkretnej fiszki. Powinny być przekazywane autorowi zestawu w formie powiadomienia.
-
-
 ## TECHNOLOGIA
 
 Ponieważ tematyka projektu nie wymusza ani silnych warunków integralnościowych, ani skomplikowanych zależności pomiędzy modelami, dobrym pomysłem wydaje się wykorzystanie baz **NoSQL**, w szczególności bazy dokumentowej **MongoDB**.
@@ -67,9 +62,3 @@ Do stworzenia aplikacji można wykorzystać język **Python**, z interfejsem opa
 3. Implementacja udostępniania oraz wyszukiwania zestawów
    
    Celem tego etapu jest dodanie podstawowej funkcjonalności społecznościowej - udostępniania własnych zestawów innym użytkownikom oraz korzystania z zestawów udostępnionych przez innych.
-
-
-
-4. Implementacja zgłoszeń błędów
-   
-   Rozwinięcie funkcji społecznościowej o możliwość zgłoszenia autorowi błędów w jego fiszce. Po zakończeniu tego etapu, powinny zostać spełnione wszystkie wymagania dotyczące projektu, zawarte w tym dokumencie.
