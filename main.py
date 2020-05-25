@@ -8,12 +8,13 @@ from ui import choice_window, show_question, deck_edit_screen, study_deck
 
 # deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
 
-def show_menu(stdscr, deck: Deck, user: User):
+def show_menu(stdscr, deck_i: int, user: User):
+    deck = list(user.decks)[deck_i]
     options = ['study', 'delete', 'edit', 'cancel']
     choice = options[choice_window(deck.name, options, stdscr)]
 
     if choice == 'delete':
-        pass
+        user.drop_deck(deck_i)
     elif choice == 'edit':
         deck_edit_screen(stdscr, DeckCreationWizard(user, deck))
         user.save()
@@ -48,8 +49,10 @@ def main(stdscr):
 
     while True:
         choice = choice_window('Talie', user.get_decks_names(), stdscr)
-        deck = list(user.decks)[choice]
-        show_menu(stdscr, deck, user)
+        if choice >= 0:
+            show_menu(stdscr, choice, user)
+        else:
+            break
 
     user.save()
 

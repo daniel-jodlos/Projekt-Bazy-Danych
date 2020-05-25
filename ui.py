@@ -98,6 +98,8 @@ def choice_window(question, options: [], stdscr) -> int:
             option = min(len(options) - 1, option + 1)
         elif key == '\n':
             break
+        elif key == 'q':
+            return -1
 
     return option
 

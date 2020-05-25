@@ -37,3 +37,7 @@ class User(Document):
         deck = self.decks.create(name=name)
         self.save()
         return DeckCreationWizard(self, deck)
+
+    def drop_deck(self, index):
+        del self.decks[index]
+        self.save()
