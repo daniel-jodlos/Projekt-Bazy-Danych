@@ -22,17 +22,20 @@ curses.cbreak()
 curses.start_color()
 curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
 curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
+curses.init_pair(5, curses.COLOR_WHITE, curses.COLOR_BLACK)
+curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
 curses.noecho()
 
 choice = choice_window('Talie:', user.get_decks_names(), stdscr)
 chosen_deck = user.decks[choice]
 
-# for card in chosen_deck.get_cards_package_for_today(10):
-#     answer = show_question(stdscr, card.question, card.answer, card.get_possible_answers())
-#     card.set_answer(card.get_possible_answers()[answer])
-#     user.save()
+for card in chosen_deck.get_cards_package_for_today(10):
+    answer = show_question(stdscr, card.question, card.answer, card.get_possible_answers())
+    card.set_answer(card.get_possible_answers()[answer])
+    user.save()
 
-deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
+# deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
 
 curses.endwin()
 user.save()

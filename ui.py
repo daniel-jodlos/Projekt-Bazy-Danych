@@ -2,7 +2,6 @@ import curses
 from math import floor, ceil
 import curses.textpad
 import curses.ascii
-
 from DeckCreationWizard import DeckCreationWizard
 
 
@@ -118,10 +117,18 @@ def show_question(stdscr, question, answer, options) -> int:
         if key == ' ':
             break
 
+    COLOURS = {
+        "Źle": 3,
+        "Trudne": 5,
+        "Dobrze": 4,
+        "Łatwe": 1
+    }
+
     centered_text(stdscr, floor((y - 2 * MARGIN - 4) / 2) + MARGIN, answer)
     windows = evenly_spaced_windows(len(options), y - MARGIN - 3, 2, x)
     for i, (option, window) in enumerate(zip(options, windows)):
-        centered_text(window, 0, "({}) {}".format(i + 1, option))
+        color = curses.color_pair(COLOURS[option])
+        centered_text(window, 0, "({}) {}".format(i + 1, option), color)
 
     stdscr.refresh()
     key = stdscr.getch() - 49
