@@ -3,7 +3,7 @@ import random
 
 from model import Deck
 from model.User import *
-from ui import choice_window, show_question, deck_edit_screen, study_deck
+from ui import choice_window, show_question, deck_edit_screen, study_deck, get_user_input
 
 
 # deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
@@ -48,9 +48,13 @@ def main(stdscr):
         deck_wizard.save()
 
     while True:
-        choice = choice_window('Talie', user.get_decks_names(), stdscr)
+        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10})
         if choice >= 0:
             show_menu(stdscr, choice, user)
+        elif choice == -10:
+            name = get_user_input(stdscr, 'Nazwa nowej talii')
+            deck_edit_screen(stdscr, user.create_new_deck(name))
+            user.save()
         else:
             break
 

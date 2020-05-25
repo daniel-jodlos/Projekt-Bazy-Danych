@@ -57,6 +57,12 @@ def get_input_window(stdscr, width, height, msg):
     return textbox.edit(lambda key: handle_key(textbox, key)).strip()
 
 
+def get_user_input(stdscr, query):
+    y,x = stdscr.getmaxyx()
+    MARGIN = 10
+    return get_input_window(stdscr, x-MARGIN, y-MARGIN, query)
+
+
 def edit_card(stdscr, card):
     y, x = stdscr.getmaxyx()
     MARGIN = 10
@@ -68,7 +74,7 @@ def edit_card(stdscr, card):
         card.answer = new_a
 
 
-def choice_window(question, options: [], stdscr) -> int:
+def choice_window(question, options: [], stdscr, special_values = {}) -> int:
     stdscr.clear()
 
     y, x = stdscr.getmaxyx()
@@ -94,12 +100,17 @@ def choice_window(question, options: [], stdscr) -> int:
         key = stdscr.getkey()
         if key == 'KEY_UP':
             option = max(0, option - 1)
+            continue
         elif key == 'KEY_DOWN':
             option = min(len(options) - 1, option + 1)
+            continue
         elif key == '\n':
             break
         elif key == 'q':
             return -1
+
+        if special_values[key] is not None:
+            return special_values[key]
 
     return option
 
