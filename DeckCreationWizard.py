@@ -22,6 +22,12 @@ class DeckCreationWizard(object):
     def set_name(self, name: str):
         self.deck.name = name
 
+    def delete_card(self, index):
+        del self.cards[index]
+        for i, c in enumerate(self.cards):
+            c.dc_id = i
+        self.save()
+
     @property
     def name(self):
         return self.deck.name

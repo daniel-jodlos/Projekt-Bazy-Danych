@@ -131,9 +131,25 @@ def show_question(stdscr, question, answer, options) -> int:
         centered_text(window, 0, "({}) {}".format(i + 1, option), color)
 
     stdscr.refresh()
-    key = stdscr.getch() - 49
+    key = len(options)
+    while key >= len(options) or key < 0:
+        key = stdscr.getch() - 49
+
+        if key == 64:
+            return -1
+
     curses.nocbreak()
     return key
+
+
+def study_deck(stdscr, deck, user):
+    for card in deck.get_cards_package_for_today(10):
+        answer = show_question(stdscr, card.question, card.answer, card.get_possible_answers())
+        if answer >= 0:
+            card.set_answer(card.get_possible_answers()[answer])
+        else:
+            break
+        user.save()
 
 
 def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
@@ -151,7 +167,7 @@ def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
 
     while True:
         centered_text(stdscr, 1, wizard.name, curses.color_pair(1))
-        centered_text(stdscr, y - 2, 'To add new press \'n\'. To edit, highlight and press ENTER', curses.color_pair(2))
+        centered_text(stdscr, y - 2, 'To add new press \'n\'. To edit, highlight and press ENTER, d to delete', curses.color_pair(2))
         centered_text(stdscr, y - 1, 'PAGE-UP, PAGE-DOWN to change pages. \'q\' to exit', curses.color_pair(2))
         content_win.clear()
         content = wizard.cards[(per_page * page):((page + 1) * per_page)]
@@ -183,4 +199,6 @@ def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
             pages = ceil(len(wizard.cards) / per_page)
             page = pages - 1
             index = 0
+        elif key == 'd' or key == 'D':
+            wizard.delete_card(index)
     wizard.save()
