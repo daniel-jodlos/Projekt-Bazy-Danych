@@ -10,7 +10,7 @@ from ui import choice_window, show_question, deck_edit_screen, study_deck, get_u
 
 def show_menu(stdscr, deck_i: int, user: User):
     deck = list(user.decks)[deck_i]
-    options = ['study', 'delete', 'edit', 'cancel']
+    options = ['study',  'edit', 'share', 'delete', 'cancel']
     choice = options[choice_window(deck.name, options, stdscr)]
 
     if choice == 'delete':
@@ -22,6 +22,9 @@ def show_menu(stdscr, deck_i: int, user: User):
         study_deck(stdscr, deck, user)
     elif choice == 'cancel':
         pass
+    elif choice == 'share':
+        decription = get_user_input(stdscr, "{} deck description".format(deck.name))
+        deck.share(user, decription)
 
 
 def main(stdscr):

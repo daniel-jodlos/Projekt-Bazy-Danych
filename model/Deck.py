@@ -36,7 +36,7 @@ class PrivateDeck(EmbeddedDocument):
 
     def share(self, user, description):
         shared = SharedDeck(cards=[c.get_shared_card() for c in self.cards], name=self.name, description=description,
-                            author=user)
+                            author_name=user.username, author_id=user.id)
         shared.save()
         return shared
 

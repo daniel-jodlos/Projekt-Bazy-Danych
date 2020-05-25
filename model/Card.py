@@ -71,7 +71,7 @@ class PrivateCard(SharedCard):
             self.state = SEEN
 
     def get_shared_card(self):
-        return SharedCard(self)
+        return SharedCard(question=self.question, answer=self.answer, dc_id=self.dc_id)
 
     def get_possible_answers(self):
         return list(FEEDBACK_SETTINGS[self._get_state()].keys())
