@@ -1,4 +1,4 @@
-from model.Deck import PrivateDeck, SharedDeck
+from model.Deck import PrivateDeck, SharedDeck, PrivateCard
 from mongoengine import *
 from DeckCreationWizard import DeckCreationWizard
 
@@ -30,7 +30,9 @@ class User(Document):
         return [d.name for d in self.decks]
 
     def import_deck(self, deck: SharedDeck):
-        self.decks.append(PrivateDeck(deck))
+        self.decks.append(PrivateDeck(name=deck.name,
+                                      cards=[PrivateCard(question=c.question, answer=c.answer, dc_id=c.dc_id) for c in
+                                             deck.cards]))  
         self.cascade_save()
 
     def create_new_deck(self, name: str) -> DeckCreationWizard:

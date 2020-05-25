@@ -10,7 +10,7 @@ from ui import choice_window, show_question, deck_edit_screen, study_deck, get_u
 
 def show_menu(stdscr, deck_i: int, user: User):
     deck = list(user.decks)[deck_i]
-    options = ['study',  'edit', 'share', 'delete', 'cancel']
+    options = ['study', 'edit', 'share', 'delete', 'cancel']
     choice = options[choice_window(deck.name, options, stdscr)]
 
     if choice == 'delete':
@@ -25,6 +25,13 @@ def show_menu(stdscr, deck_i: int, user: User):
     elif choice == 'share':
         decription = get_user_input(stdscr, "{} deck description".format(deck.name))
         deck.share(user, decription)
+
+
+def import_deck(stdscr, user):
+    choice = choice_window('Which one do you choose?', [d.name for d in SharedDeck.objects()], stdscr)
+    chosen = SharedDeck.objects()[choice]
+    user.import_deck(chosen)
+    user.save()
 
 
 def main(stdscr):
@@ -51,13 +58,15 @@ def main(stdscr):
         deck_wizard.save()
 
     while True:
-        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10})
+        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11})
         if choice >= 0:
             show_menu(stdscr, choice, user)
         elif choice == -10:
             name = get_user_input(stdscr, 'Nazwa nowej talii')
             deck_edit_screen(stdscr, user.create_new_deck(name))
             user.save()
+        elif choice == -11:
+            import_deck(stdscr, user)
         else:
             break
 
