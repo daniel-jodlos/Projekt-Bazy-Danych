@@ -23,15 +23,18 @@ def show_menu(stdscr, deck_i: int, user: User):
     elif choice == 'cancel':
         pass
     elif choice == 'share':
-        decription = get_user_input(stdscr, "{} deck description".format(deck.name))
-        deck.share(user, decription)
+        description = get_user_input(stdscr, "{} deck description".format(deck.name))
+        deck.share(user, description)
 
 
 def import_deck(stdscr, user):
-    choice = choice_window('Which one do you choose?', [d.name for d in SharedDeck.objects()], stdscr)
-    chosen = SharedDeck.objects()[choice]
-    user.import_deck(chosen)
-    user.save()
+    search_term = get_user_input(stdscr, 'Search term')
+    objects = SharedDeck.objects(name__icontains=search_term)
+    choice = choice_window('Which one do you choose?',
+                           [d.name for d in objects], stdscr)
+    if choice >= 0:
+        chosen = objects[choice]
+        user.import_deck(chosen)
 
 
 def main(stdscr):
@@ -48,9 +51,11 @@ def main(stdscr):
     try:
         user = login_user('danjod40@gmail.com')
         print("Logged in as", end=' ')
-    except Exception:
+    except NoSuchUserException:
         print("Registered as", end=' ')
         user = register_user('danjod', 'danjod40@gmail.com')
+
+    print(user.username)
 
     if len(user.decks) < 3:
         deck_wizard = user.create_new_deck('random_deck_{}'.format(random.uniform(1, 10)))

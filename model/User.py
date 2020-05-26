@@ -3,11 +3,16 @@ from mongoengine import *
 from DeckCreationWizard import DeckCreationWizard
 
 
+class NoSuchUserException(Exception):
+    def __init__(self):
+        super('No such user')
+
+
 def login_user(email):
     try:
         return User.objects(email=email)[0]
     except IndexError:
-        raise Exception("No such user! Please register")
+        raise NoSuchUserException()
 
 
 def register_user(username, email):
