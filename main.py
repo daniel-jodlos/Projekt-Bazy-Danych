@@ -44,15 +44,16 @@ def import_deck(stdscr, user):
 def handle_user(stdscr):
     while True:
         credentials = get_login_credentials(stdscr)
-        username = credentials[0]
+        email = credentials[0]
         password = credentials[1]
         try:
-            return login_user(username, password)
+            return login_user(email, password)
         except NoSuchUserException:
             try:
-                return register_user(username, username, password)
+                username = get_user_input(stdscr, 'You are creating a new account. How do you want to be called?')
+                return register_user(username, email, password)
             except mongoengine.errors.ValidationError:
-                show_message(stdscr, "{} is not a correct email address".format(username))
+                show_message(stdscr, "{} is not a correct email address".format(email))
                 continue
         except IncorrectPasswordException:
             show_message(stdscr, "Incorrect password")
