@@ -85,6 +85,8 @@ def main(stdscr):
             user.save()
         elif choice == -11:
             import_deck(stdscr, user)
+        elif choice == -1:
+            break
         else:
             break
 
