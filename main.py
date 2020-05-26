@@ -11,7 +11,8 @@ from ui import choice_window, show_question, deck_edit_screen, study_deck, get_u
 
 def show_menu(stdscr, deck_i: int, user: User):
     deck = list(user.decks)[deck_i]
-    options = list(filter(lambda x: x is not None, ['study', 'edit', 'share' if deck.size > 0 else None, 'delete', 'cancel']))
+    options = list(
+        filter(lambda x: x is not None, ['study', 'edit', 'share' if deck.size > 0 else None, 'delete', 'cancel']))
     choice = options[choice_window(deck.name, options, stdscr)]
 
     if choice == 'delete':
@@ -29,7 +30,7 @@ def show_menu(stdscr, deck_i: int, user: User):
 
 
 def import_deck(stdscr, user):
-    search_term = get_user_input(stdscr, 'Search term')
+    search_term = get_user_input(stdscr, 'Search term (ESC to accept)')
     objects = SharedDeck.objects(name__icontains=search_term)
     choice = choice_window('Which one do you choose?',
                            [(d.name, d.description) for d in objects], stdscr)
@@ -67,7 +68,8 @@ def main(stdscr):
     print(user.username)
 
     while True:
-        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11}, ['pierdolenie o szopenie do kurwy nędzy'])
+        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11},
+                               ['\'n\' to create new deck, \'i\' to search for shared decks', '\'q\' to exit'])
         if choice >= 0:
             show_menu(stdscr, choice, user)
         elif choice == -10:
