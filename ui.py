@@ -124,7 +124,7 @@ def choice_window(question, options: [], stdscr, special_values={}, description=
         elif key == 'q':
             return -1
 
-        if special_values[key] is not None:
+        if key in special_values.keys():
             return special_values[key]
 
     return option

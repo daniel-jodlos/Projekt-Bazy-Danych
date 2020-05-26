@@ -1,6 +1,8 @@
 import curses
 import random
 
+import mongoengine
+
 from model import Deck
 from model.User import *
 from ui import choice_window, show_question, deck_edit_screen, study_deck, get_user_input, get_login_credentials, \
@@ -40,14 +42,18 @@ def import_deck(stdscr, user):
 
 
 def handle_user(stdscr):
-    credentials = get_login_credentials(stdscr)
-    username = credentials[0]
-    password = credentials[1]
     while True:
+        credentials = get_login_credentials(stdscr)
+        username = credentials[0]
+        password = credentials[1]
         try:
             return login_user(username, password)
         except NoSuchUserException:
-            return register_user(username, username, password)
+            try:
+                return register_user(username, username, password)
+            except mongoengine.errors.ValidationError:
+                show_message(stdscr, "{} is not a correct email address".format(username))
+                continue
         except IncorrectPasswordException:
             show_message(stdscr, "Incorrect password")
             continue
