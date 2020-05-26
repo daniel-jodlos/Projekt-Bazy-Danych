@@ -58,9 +58,9 @@ def get_input_window(stdscr, width, height, msg):
 
 
 def get_user_input(stdscr, query):
-    y,x = stdscr.getmaxyx()
-    MARGIN = 10
-    return get_input_window(stdscr, x-MARGIN, y-MARGIN, query)
+    y, x = stdscr.getmaxyx()
+    MARGIN = 4
+    return get_input_window(stdscr, x - MARGIN, y - MARGIN-2, query)
 
 
 def edit_card(stdscr, card):
@@ -74,27 +74,37 @@ def edit_card(stdscr, card):
         card.answer = new_a
 
 
-def choice_window(question, options: [], stdscr, special_values = {}) -> int:
+def choice_window(question, options: [], stdscr, special_values={}) -> int:
     stdscr.clear()
 
     y, x = stdscr.getmaxyx()
-    centered_text(stdscr, floor((y - (2 + len(options))) / 2), question)
 
-    win_x = max([len(i) for i in options]) + 3
-    win_begin_y = floor((y - (2 + len(options))) / 2 + 2)
-    win_begin_x = floor((x - win_x) / 2) - 3
-    op_win = curses.newwin(len(options) + 1, win_x, win_begin_y, win_begin_x)
+    op_win_height = sum([1 if not type(a) is tuple else 3 + ceil(len(a[1]) / (x - 10)) for a in options]) + 2
+
+    win_x = max([len(i) for i in options]) + 3 if op_win_height == len(options)+2 else x-10
+    win_begin_y = floor((y - op_win_height - 2) / 2 + 2)
+    win_begin_x = floor((x - win_x) / 2)
+    centered_text(stdscr, win_begin_y - 1, question)
+    op_win = curses.newwin(op_win_height, win_x, win_begin_y, win_begin_x)
     op_win.refresh()
     stdscr.refresh()
 
     option = 0
     while True:
+        offset = 0
         for i, op in enumerate(options):
+            description = None
+            if type(op) == tuple:
+                description = op[1]
+                op = op[0]
             if i == option:
-                op_win.addstr(i, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op),
+                op_win.addstr(i + offset, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op),
                               curses.color_pair(1))
             else:
-                op_win.addstr(i, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op))
+                op_win.addstr(i + offset, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op))
+            if description is not None:
+                op_win.addstr(i + offset+2, 0, description)
+                offset += ceil(len(description) / x) + 2
         op_win.refresh()
 
         key = stdscr.getkey()
@@ -174,36 +184,37 @@ def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
     page = 0
     stdscr.clear()
 
-    content_win = curses.newwin(per_page, x-2, 3, 1)
+    content_win = curses.newwin(per_page, x - 2, 3, 1)
     stdscr.refresh()
     content_win.refresh()
 
     while True:
         centered_text(stdscr, 1, wizard.name, curses.color_pair(1))
-        centered_text(stdscr, y - 2, 'To add new press \'n\'. To edit, highlight and press ENTER, d to delete', curses.color_pair(2))
+        centered_text(stdscr, y - 2, 'To add new press \'n\'. To edit, highlight and press ENTER, d to delete',
+                      curses.color_pair(2))
         centered_text(stdscr, y - 1, 'PAGE-UP, PAGE-DOWN to change pages. \'q\' to exit', curses.color_pair(2))
         content_win.clear()
         content = wizard.cards[(per_page * page):((page + 1) * per_page)]
         for i, card in enumerate(content):
             if i == index:
-                content_win.addstr(i, 0, '{}) {} -> {} <<--'.format(card.dc_id+1, card.question, card.answer),
+                content_win.addstr(i, 0, '{}) {} -> {} <<--'.format(card.dc_id + 1, card.question, card.answer),
                                    curses.color_pair(2))
             else:
-                content_win.addstr(i, 0, '{}) {} -> {}'.format(card.dc_id+1, card.question, card.answer))
+                content_win.addstr(i, 0, '{}) {} -> {}'.format(card.dc_id + 1, card.question, card.answer))
 
         content_win.refresh()
         key = stdscr.getkey()
         if key == 'q' or key == 'Q':
             break
         elif key == 'KEY_DOWN':
-            index = min(index + 1, len(content)-1)
+            index = min(index + 1, len(content) - 1)
         elif key == 'KEY_UP':
             index = max(0, index - 1)
         elif key == '\n':
             edit_card(stdscr, content[index])
             wizard.save()
         elif key == 'KEY_NPAGE':
-            page = min(pages-1, page + 1)
+            page = min(pages - 1, page + 1)
         elif key == 'KEY_PPAGE':
             page = max(page - 1, 0)
         elif key == 'n' or key == 'N':

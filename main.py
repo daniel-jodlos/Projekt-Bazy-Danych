@@ -31,7 +31,7 @@ def import_deck(stdscr, user):
     search_term = get_user_input(stdscr, 'Search term')
     objects = SharedDeck.objects(name__icontains=search_term)
     choice = choice_window('Which one do you choose?',
-                           [d.name for d in objects], stdscr)
+                           [(d.name, d.description) for d in objects], stdscr)
     if choice >= 0:
         chosen = objects[choice]
         user.import_deck(chosen)
