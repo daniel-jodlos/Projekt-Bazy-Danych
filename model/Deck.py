@@ -51,7 +51,7 @@ class PrivateDeck(EmbeddedDocument):
                 break
             elif card.state == UNSEEN:
                 continue
-            elif card.scheduled_for is not None and card.scheduled_for.date() <= date.today():
+            elif card.scheduled_for is not None and card.for_today():
                 result.append(card)
 
         return result

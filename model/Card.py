@@ -1,6 +1,5 @@
 from mongoengine import *
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, date
 
 UNSEEN = 0
 SEEN = 1
@@ -75,3 +74,7 @@ class PrivateCard(SharedCard):
 
     def get_possible_answers(self):
         return list(FEEDBACK_SETTINGS[self._get_state()].keys())
+
+    def for_today(self):
+        return self.scheduled_for.date() <= date.today()
+

@@ -11,7 +11,7 @@ from ui import choice_window, show_question, deck_edit_screen, study_deck, get_u
 
 def show_menu(stdscr, deck_i: int, user: User):
     deck = list(user.decks)[deck_i]
-    options = ['study', 'edit', 'share', 'delete', 'cancel']
+    options = list(filter(lambda x: x is not None, ['study', 'edit', 'share' if deck.size > 0 else None, 'delete', 'cancel']))
     choice = options[choice_window(deck.name, options, stdscr)]
 
     if choice == 'delete':

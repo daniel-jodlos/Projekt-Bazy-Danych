@@ -167,10 +167,13 @@ def show_question(stdscr, question, answer, options) -> int:
 
 
 def study_deck(stdscr, deck, user):
-    for card in deck.get_cards_package_for_today(10):
+    queue = deck.get_cards_package_for_today(10)
+    for card in queue:
         answer = show_question(stdscr, card.question, card.answer, card.get_possible_answers())
         if answer >= 0:
             card.set_answer(card.get_possible_answers()[answer])
+            if card.for_today():
+                queue.append(card)
         else:
             break
         user.save()
