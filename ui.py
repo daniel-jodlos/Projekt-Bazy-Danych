@@ -91,6 +91,7 @@ def choice_window(question, options: [], stdscr, special_values={}) -> int:
 
     option = 0
     while True:
+        op_win.clear()
         offset = 0
         for i, op in enumerate(options):
             description = None
@@ -102,7 +103,7 @@ def choice_window(question, options: [], stdscr, special_values={}) -> int:
                               curses.color_pair(1))
             else:
                 op_win.addstr(i + offset, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op))
-            if description is not None:
+            if description is not None and i == option:
                 op_win.addstr(i + offset+2, 0, description)
                 offset += ceil(len(description) / x) + 2
         op_win.refresh()
