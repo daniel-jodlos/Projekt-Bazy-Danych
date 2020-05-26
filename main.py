@@ -64,16 +64,10 @@ def main(stdscr):
     curses.noecho()
 
     user = handle_user(stdscr)
-
     print(user.username)
 
-    if len(user.decks) < 3:
-        deck_wizard = user.create_new_deck('random_deck_{}'.format(random.uniform(1, 10)))
-        deck_wizard.load_csv('example.csv')
-        deck_wizard.save()
-
     while True:
-        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11})
+        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11}, ['pierdolenie o szopenie do kurwy nędzy'])
         if choice >= 0:
             show_menu(stdscr, choice, user)
         elif choice == -10:

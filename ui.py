@@ -74,7 +74,8 @@ def edit_card(stdscr, card):
         card.answer = new_a
 
 
-def choice_window(question, options: [], stdscr, special_values={}) -> int:
+def choice_window(question, options: [], stdscr, special_values={}, description=[]) -> int:
+
     stdscr.clear()
 
     y, x = stdscr.getmaxyx()
@@ -86,6 +87,10 @@ def choice_window(question, options: [], stdscr, special_values={}) -> int:
     win_begin_x = floor((x - win_x) / 2)
     centered_text(stdscr, win_begin_y - 1, question)
     op_win = curses.newwin(op_win_height, win_x, win_begin_y, win_begin_x)
+
+    for i, line in enumerate(description):
+        centered_text(stdscr, y - 1 - i, line, curses.color_pair(1))
+
     op_win.refresh()
     stdscr.refresh()
 
@@ -248,15 +253,27 @@ def get_login_credentials(stdscr):
     FIRST_LINE = 'Email:'
     SECOND_LINE = 'Password":'
 
-    stdscr.addstr(0, 0, FIRST_LINE)
-    stdscr.addstr(1, 0, SECOND_LINE)
+    y, x = stdscr.getmaxyx()
+
+    centered_text(stdscr, y - 2, "If are not registered, just type-in your email and password.", curses.color_pair(1))
+    centered_text(stdscr, y - 1, "you will be redirected to registration screen automatically", curses.color_pair(1))
+
+    win_x = 50
+    win_y = 5
+    win_y_start = floor((y - win_y) / 2)
+    win = curses.newwin(win_y, win_x, win_y_start, floor((x - win_x) / 2))
+    win.refresh()
+    stdscr.refresh()
+    win.addstr(2, 0, FIRST_LINE)
+    win.addstr(3, 0, SECOND_LINE)
+    centered_text(win, 0, "Zaloguj się", curses.color_pair(1))
 
     curses.echo()
-    stdscr.move(0, len(FIRST_LINE) + 1)
-    username = collect_string(stdscr)
+    win.move(2, len(FIRST_LINE) + 1)
+    username = collect_string(win)
     curses.noecho()
-    stdscr.move(1, len(SECOND_LINE) + 1)
-    password = collect_string(stdscr)
+    win.move(3, len(SECOND_LINE) + 1)
+    password = collect_string(win)
 
     return [username, password]
 
