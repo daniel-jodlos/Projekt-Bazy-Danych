@@ -3,7 +3,8 @@ import random
 
 from model import Deck
 from model.User import *
-from ui import choice_window, show_question, deck_edit_screen, study_deck, get_user_input
+from ui import choice_window, show_question, deck_edit_screen, study_deck, get_user_input, get_login_credentials, \
+    show_message
 
 
 # deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
@@ -37,6 +38,20 @@ def import_deck(stdscr, user):
         user.import_deck(chosen)
 
 
+def handle_user(stdscr):
+    credentials = get_login_credentials(stdscr)
+    username = credentials[0]
+    password = credentials[1]
+    while True:
+        try:
+            return login_user(username, password)
+        except NoSuchUserException:
+            return register_user(username, username, password)
+        except IncorrectPasswordException:
+            show_message(stdscr, "Incorrect password")
+            continue
+
+
 def main(stdscr):
     stdscr.keypad(True)
     curses.cbreak()
@@ -48,12 +63,7 @@ def main(stdscr):
     curses.init_pair(4, curses.COLOR_GREEN, curses.COLOR_BLACK)
     curses.noecho()
 
-    try:
-        user = login_user('danjod40@gmail.com')
-        print("Logged in as", end=' ')
-    except NoSuchUserException:
-        print("Registered as", end=' ')
-        user = register_user('danjod', 'danjod40@gmail.com')
+    user = handle_user(stdscr)
 
     print(user.username)
 

@@ -60,7 +60,7 @@ def get_input_window(stdscr, width, height, msg):
 def get_user_input(stdscr, query):
     y, x = stdscr.getmaxyx()
     MARGIN = 4
-    return get_input_window(stdscr, x - MARGIN, y - MARGIN-2, query)
+    return get_input_window(stdscr, x - MARGIN, y - MARGIN - 2, query)
 
 
 def edit_card(stdscr, card):
@@ -81,7 +81,7 @@ def choice_window(question, options: [], stdscr, special_values={}) -> int:
 
     op_win_height = sum([1 if not type(a) is tuple else 3 + ceil(len(a[1]) / (x - 10)) for a in options]) + 2
 
-    win_x = max([len(i) for i in options]) + 3 if op_win_height == len(options)+2 else x-10
+    win_x = max([len(i) for i in options]) + 3 if op_win_height == len(options) + 2 else x - 10
     win_begin_y = floor((y - op_win_height - 2) / 2 + 2)
     win_begin_x = floor((x - win_x) / 2)
     centered_text(stdscr, win_begin_y - 1, question)
@@ -104,8 +104,8 @@ def choice_window(question, options: [], stdscr, special_values={}) -> int:
             else:
                 op_win.addstr(i + offset, 0, '{pref} {value}'.format(pref='->' if i == option else '  ', value=op))
             if description is not None and i == option:
-                op_win.addstr(i + offset+2, 0, description)
-                offset += ceil(len(description) / x) + 2
+                op_win.addstr(i + offset + 2, 0, description)
+                offset += ceil(len(description) / x) + 3
         op_win.refresh()
 
         key = stdscr.getkey()
@@ -227,3 +227,41 @@ def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
         elif key == 'd' or key == 'D':
             wizard.delete_card(index)
     wizard.save()
+
+
+def collect_string(stdscr) -> str:
+    string = ''
+    while True:
+        key = stdscr.getkey()
+        if key == '\n':
+            return string.strip()
+        else:
+            string += key
+
+
+def get_login_credentials(stdscr):
+    stdscr.clear()
+
+    FIRST_LINE = 'Email:'
+    SECOND_LINE = 'Password":'
+
+    stdscr.addstr(0, 0, FIRST_LINE)
+    stdscr.addstr(1, 0, SECOND_LINE)
+
+    curses.echo()
+    stdscr.move(0, len(FIRST_LINE) + 1)
+    username = collect_string(stdscr)
+    curses.noecho()
+    stdscr.move(1, len(SECOND_LINE) + 1)
+    password = collect_string(stdscr)
+
+    return [username, password]
+
+
+def show_message(stdscr, message):
+    y, _ = stdscr.getmaxyx()
+    stdscr.clear()
+
+    centered_text(stdscr, floor((y - 1) / 2), message)
+    centered_text(stdscr, y - 2, "Press any key to continue")
+    stdscr.getch()

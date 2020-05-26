@@ -1,31 +1,24 @@
-from model.Deck import PrivateDeck, SharedDeck, PrivateCard
 from mongoengine import *
+import hashlib
+
 from DeckCreationWizard import DeckCreationWizard
+from model.Deck import PrivateDeck, SharedDeck, PrivateCard
 
 
 class NoSuchUserException(Exception):
     def __init__(self):
-        super('No such user')
+        super()
 
 
-def login_user(email):
-    try:
-        return User.objects(email=email)[0]
-    except IndexError:
-        raise NoSuchUserException()
-
-
-def register_user(username, email):
-    return User(username=username, email=email).save()
-
-
-def find_by_id(uid):
-    return User.objects(id=uid)
+class IncorrectPasswordException(Exception):
+    def __init__(self):
+        super()
 
 
 class User(Document):
     username = StringField(max_length=20)
-    email = EmailField(max_length=40)
+    password_hash = StringField(max_length=256, required=True)
+    email = EmailField(max_length=40, required=True, unique=True)
     decks = EmbeddedDocumentListField(PrivateDeck, default=[])
 
     def __str__(self):
@@ -37,7 +30,7 @@ class User(Document):
     def import_deck(self, deck: SharedDeck):
         self.decks.append(PrivateDeck(name=deck.name,
                                       cards=[PrivateCard(question=c.question, answer=c.answer, dc_id=c.dc_id) for c in
-                                             deck.cards]))  
+                                             deck.cards]))
         self.cascade_save()
 
     def create_new_deck(self, name: str) -> DeckCreationWizard:
@@ -48,3 +41,23 @@ class User(Document):
     def drop_deck(self, index):
         del self.decks[index]
         self.save()
+
+
+def login_user(email, password):
+    try:
+        password_hash = hashlib.sha256(password.encode()).hexdigest()
+        user = User.objects(email=email)[0]
+        if user.password_hash == password_hash:
+            return user
+        raise IncorrectPasswordException()
+    except IndexError:
+        raise NoSuchUserException()
+
+
+def register_user(username, email, password):
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    return User(username=username, email=email, password_hash=password_hash).save()
+
+
+def find_by_id(uid):
+    return User.objects(id=uid)
