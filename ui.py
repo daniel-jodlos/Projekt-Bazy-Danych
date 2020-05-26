@@ -75,14 +75,11 @@ def edit_card(stdscr, card):
 
 
 def choice_window(question, options: [], stdscr, special_values={}, description=[]) -> int:
-
     stdscr.clear()
-
     y, x = stdscr.getmaxyx()
 
-    op_win_height = sum([1 if not type(a) is tuple else 3 + ceil(len(a[1]) / (x - 10)) for a in options]) + 2
-
-    win_x = max([len(i) for i in options]) + 3 if op_win_height == len(options) + 2 else x - 10
+    op_win_height = sum([1 if not type(a) is tuple else 3 + ceil(len(a[1]) / (x - 10)) for a in options]) + 2 if len(options) != 0 else 3
+    win_x = max([len(i) for i in options]) + 3 if op_win_height == len(options) + 2 else x - 10 if len(options) != 0 else 20
     win_begin_y = floor((y - op_win_height - 2) / 2 + 2)
     win_begin_x = floor((x - win_x) / 2)
     centered_text(stdscr, win_begin_y - 1, question)
@@ -111,6 +108,8 @@ def choice_window(question, options: [], stdscr, special_values={}, description=
             if description is not None and i == option:
                 op_win.addstr(i + offset + 2, 0, description)
                 offset += ceil(len(description) / x) + 3
+        if len(options) == 0:
+            op_win.addstr(0, 0, "Nothing here :(")
         op_win.refresh()
 
         key = stdscr.getkey()
@@ -251,7 +250,7 @@ def get_login_credentials(stdscr):
     stdscr.clear()
 
     FIRST_LINE = 'Email:'
-    SECOND_LINE = 'Password":'
+    SECOND_LINE = 'Password:'
 
     y, x = stdscr.getmaxyx()
 
