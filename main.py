@@ -1,15 +1,12 @@
 import curses
-import random
 
 import mongoengine
 
-from model import Deck
+from model.LoginCredentials import NoSuchUserException, IncorrectPasswordException, login_user, register_user
 from model.User import *
-from ui import choice_window, show_question, deck_edit_screen, study_deck, get_user_input, get_login_credentials, \
+from ui import choice_window, deck_edit_screen, study_deck, get_user_input, get_login_credentials, \
     show_message
 
-
-# deck_edit_screen(stdscr, DeckCreationWizard(user, chosen_deck))
 
 def show_menu(stdscr, deck_i: int, user: User):
     deck = list(user.decks)[deck_i]
@@ -75,7 +72,7 @@ def main(stdscr):
     print(user.username)
 
     while True:
-        choice = choice_window('Talie', user.get_decks_names(), stdscr, {'n': -10, 'i': -11},
+        choice = choice_window('Your decks:', user.get_decks_names(), stdscr, {'n': -10, 'i': -11},
                                ['\'n\' to create new deck, \'i\' to search for shared decks', '\'q\' to exit'])
         if choice >= 0:
             show_menu(stdscr, choice, user)

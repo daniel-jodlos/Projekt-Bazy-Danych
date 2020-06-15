@@ -7,8 +7,12 @@ class DeckCreationWizard(object):
         self.author = author
         self.deck = deck
 
-    def save(self):
-        self.author.save()
+    def save(self, exception=False):
+        try:
+            self.author.save()
+        except Exception:
+            if exception:
+                raise
 
     def add_card(self, c: PrivateCard):
         self.deck.add_card(c)
@@ -49,4 +53,4 @@ class DeckCreationWizard(object):
         self.deck.share()
         
     def __del__(self):
-        self.save()
+        self.save(exception=True)

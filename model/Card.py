@@ -7,20 +7,20 @@ LEARNT = 2
 
 FEEDBACK_SETTINGS = {
     UNSEEN: {
-        "Źle": timedelta(seconds=10 * 60),
-        "Dobrze": timedelta(days=1)
+        "Incorrect": timedelta(seconds=10 * 60),
+        "Correct": timedelta(days=1)
     },
     SEEN: {
-        "Źle": timedelta(seconds=60 * 10),
-        "Trudne": timedelta(days=1),
-        "Dobrze": timedelta(days=2),
-        "Łatwe": timedelta(days=4)
+        "Incorrect": timedelta(seconds=60 * 10),
+        "Difficult": timedelta(days=1),
+        "Correct": timedelta(days=2),
+        "Easy": timedelta(days=4)
     },
     LEARNT: {
-        "Źle": timedelta(seconds=60 * 10),
-        "Trudne": timedelta(days=1),
-        "Dobrze": timedelta(days=7),
-        "Łatwe": timedelta(days=14)
+        "Incorrect": timedelta(seconds=60 * 10),
+        "Difficult": timedelta(days=1),
+        "Correct": timedelta(days=7),
+        "Easy": timedelta(days=14)
     }
 }
 
@@ -53,7 +53,7 @@ class PrivateCard(SharedCard):
         return self.state == SEEN or self.state == LEARNT
 
     def is_learnt(self):
-        return len(self.history) >= 2 and self.history[0] != "Źle" and self.history[1] != "Źle"
+        return len(self.history) >= 2 and self.history[0] != "Incorrect" and self.history[1] != "Incorrect"
 
     def _get_state(self):
         return self.state
@@ -64,9 +64,9 @@ class PrivateCard(SharedCard):
 
         if self.state == UNSEEN:
             self.state = SEEN
-        if len(self.history) >= 2 and self.history[0].answer != "Źle" and self.history[1].answer != "Źle":
+        if len(self.history) >= 2 and self.history[0].answer != "Incorrect" and self.history[1].answer != "Incorrect":
             self.state = LEARNT
-        if answer == 'Źle':
+        if answer == 'Incorrect':
             self.state = SEEN
 
     def get_shared_card(self):
