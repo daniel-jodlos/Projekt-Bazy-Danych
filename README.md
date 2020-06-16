@@ -1,5 +1,5 @@
 W ramach projektu stworzona została aplikacja konsolowa implementująca metodę Fiszek.
-Oryginalny opis projektu znajduje się w pliku [description.md](description.md).
+Oryginalny opis projektu znajduje się w pliku [`description.md`](description.md).
 
 ## Do uruchomienia potrzebne są
 - Python 3
