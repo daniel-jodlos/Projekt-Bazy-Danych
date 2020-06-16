@@ -31,7 +31,9 @@ metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
 ## Struktura bazy danych
 **Kolekcja `login_credentials`**
 
-Przechowuje dane logowania zarejestrowanych użytkowników
+Przechowuje dane logowania zarejestrowanych użytkowników.
+
+Przykładowy dokument:
 ```json
 /* 1 */
 {
@@ -46,6 +48,7 @@ Przechowuje dane logowania zarejestrowanych użytkowników
 
 Przechowuje talie udostępnione przez użytkowników
 
+Przykładowy dokument:
 ```json
 /* 1 */
 {
@@ -100,6 +103,7 @@ Przechowuje talie udostępnione przez użytkowników
 
 Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika
 
+Przykładowy dokument:
 ```json
 /* 1 */
 {
