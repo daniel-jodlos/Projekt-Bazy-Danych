@@ -146,10 +146,10 @@ def show_question(stdscr, question, answer, options) -> int:
             break
 
     COLOURS = {
-        "Źle": 3,
-        "Trudne": 5,
-        "Dobrze": 4,
-        "Łatwe": 1
+        "Incorrect": 3,
+        "Difficult": 5,
+        "Correct": 4,
+        "Easy": 1
     }
 
     centered_text(stdscr, floor((y - 2 * MARGIN - 4) / 2) + MARGIN, answer)

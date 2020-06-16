@@ -1,7 +1,7 @@
 W ramach projektu stworzona została aplikacja konsolowa implementująca metodę Fiszek.
 Oryginalny opis projektu znajduje się w pliku [description.md](description.md).
 
-### Do uruchomienia potrzebne są
+## Do uruchomienia potrzebne są
 - Python 3
     - mongoengine
     - curses
@@ -12,7 +12,7 @@ Kod domyślne dla mongoengine parametry połączenia z bazą lokalną:
 `connect('flashcards')`, w niektórych przypadkach może być konieczna modyfikacja
 metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
 
-### Opis kodu
+## Opis kodu
 **Na aplikacje składają się 2 elementy:**
 1. Aplikacja klienta
 1. Baza danych MongoDB
