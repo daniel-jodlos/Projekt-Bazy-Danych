@@ -1,7 +1,7 @@
 W ramach projektu stworzona została aplikacja konsolowa implementująca metodę Fiszek.
 Oryginalny opis projektu znajduje się w pliku [`description.md`](description.md).
 
-## Do uruchomienia potrzebne są
+### Do uruchomienia potrzebne są
 - Python 3
     - mongoengine
     - curses
@@ -12,7 +12,7 @@ Kod domyślne dla mongoengine parametry połączenia z bazą lokalną:
 `connect('flashcards')`, w niektórych przypadkach może być konieczna modyfikacja
 metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
 
-## Opis kodu
+# Opis kodu
 **Na aplikacje składają się 2 elementy:**
 1. Aplikacja klienta
 1. Baza danych MongoDB
@@ -29,9 +29,12 @@ metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
 - `example.csv` - przykładowa talia do zaimportowania
 
 ## Struktura bazy danych
-**Kolekcja `login_credentials`**
+### Kolekcja `login_credentials`
 
-Przechowuje dane logowania zarejestrowanych użytkowników.
+Przechowuje dane logowania zarejestrowanych użytkowników:
+- adres email, wykorzystywany jako identyfikator użytownika
+- hash hasła
+- informację do którego użytkownika należą dane
 
 Przykładowy dokument:
 ```json
@@ -44,11 +47,22 @@ Przykładowy dokument:
 }
 ```
 
-**Kolekcja `shared_deck`**
+### Kolekcja `shared_deck`
 
-Przechowuje talie udostępnione przez użytkowników
+Przechowuje talie udostępnione przez użytkowników. Każda talia zawiera:
+- informacje o autorze (nazwę użytkownika oraz jego id)
+- nazwę talii
+- opis talii
+- datę dodania
+- listę fiszek zawartą w talii (pole `cards`)
 
-Przykładowy dokument:
+Każda fiszka przechowywana w liście zawiera następujące atrybuty:
+- `dc_id` - unikalny identyfikator fiszki w kontekście talii
+- `question` - pytanie zawarte w fiszcze
+- `answer` - poprawna odpowiedź na pytanie
+- *`_cls` - wartośc nieistotna, atrybut wygenerowany automatycznie przez mongoengine, związany z uruchomieniem mechanizmu dziedzienia*
+
+**Przykładowy dokument:**
 ```json
 /* 1 */
 {
@@ -99,11 +113,23 @@ Przykładowy dokument:
 }
 ```
 
-**Kolekcja `user`**
+### Kolekcja `user`
 
-Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika
+Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika. Każdy dokument jest unikalny dla dokładnie jednego z użytkowników. Zawiera:
+- `username` - nazwę użytkownika do którego się odnosi
+- `email` - adres email użytkownika
+- `decks` - listę talii utworzonych lub zaimportowanych do konta użytkownika. Każdy element listy zawiera:
+  - `name` - nazwę talii
+  - `size` - rozmiar
+  - `cards` - listę fiszek zawartych w talii. Każda z nich może powstać z fiszki przechowywanej w talii współdzielonej i każda zawiera:
+    - `dc_id` - unikalny numer identyfikacyjny w obrębie talii
+    - `question` - pytanie
+    - `answer` - poprawną odpowiedź na pytanie
+    - `history` - historię nauki fiszki, zawierającą jej stan (wartość atrybutu `state`) w momencie nauki oraz wybraną odpowiedź
+    - `scheduled_for` - infrmację kiedy użytkownik zobaczy daną fiszkę (jeżeli będzie taka możliwość)
+    - `state` - informacja o aktualnym statusie fiszki. Wartość odnosi się do wartości zmiennych globalnych `UNSEEN`, `SEEN` i `LEARNT`, zdefyniowanych z pliku [`model/Card.py`](model/Card.py)
 
-Przykładowy dokument:
+**Przykładowy dokument:**
 ```json
 /* 1 */
 {

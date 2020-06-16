@@ -1,13 +1,11 @@
 # Opis projektu
 
-
 ## OMÓWIENIE
 
 Celem projektu jest zaprojektowanie oraz implementacja aplikacji bazodanowej do nauki metodą fiszek. Aplikacja posiada też możliwość udostępnienia gotowych zestawów innym użytkownikom, oraz raportowanie ewentualnych błędów autorowi.
 
 
 ## SPECYFIKACJA
-
 
 ### Użytkownicy
 
