@@ -7,7 +7,7 @@ from .User import User
 class LoginCredentials(Document):
     password_hash = StringField(max_length=256, required=True)
     email = EmailField(max_length=40, required=True, unique=True)
-    user = ReferenceField(User)
+    user = ReferenceField(User, required=True, unique=True)
 
     def get_user(self):
         return self.user

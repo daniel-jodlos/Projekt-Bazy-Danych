@@ -47,7 +47,7 @@ def handle_user(stdscr):
             return login_user(email, password)
         except NoSuchUserException:
             try:
-                username = get_user_input(stdscr, 'You are creating a new account. How do you want to be called?')
+                username = get_user_input(stdscr, 'You are creating a new account. Choose your new username')
                 return register_user(username, email, password)
             except mongoengine.errors.ValidationError:
                 show_message(stdscr, "{} is not a correct email address".format(email))

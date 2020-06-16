@@ -233,6 +233,8 @@ def deck_edit_screen(stdscr, wizard: DeckCreationWizard):
             index = 0
         elif key == 'd' or key == 'D':
             wizard.delete_card(index)
+        elif key == 'i' or key == 'I':
+            wizard.load_csv('example.csv')
     wizard.save()
 
 

@@ -1,5 +1,4 @@
 from model.Card import PrivateCard
-from pandas import read_csv
 
 
 class DeckCreationWizard(object):
@@ -45,6 +44,7 @@ class DeckCreationWizard(object):
         return self.deck.size
 
     def load_csv(self, filename):
+        from pandas import read_csv
         df = read_csv(filename, sep=';')
         for (q, a) in zip(df['question'], df['answer']):
             self.add_card(PrivateCard(question=q, answer=a))
