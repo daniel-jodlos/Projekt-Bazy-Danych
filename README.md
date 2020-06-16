@@ -1,12 +1,20 @@
 W ramach projektu stworzona została aplikacja konsolowa implementująca metodę Fiszek.
 Oryginalny opis projektu znajduje się w pliku [`description.md`](description.md).
 
-### Do uruchomienia potrzebne są
+## Instrukcja uruchomienia
+
+**Do uruchomienia konieczne są poniższe zależności**
 - Python 3
     - mongoengine
     - curses
 - Uruchomiona lokalnie instancja MongoDB
-- System Operacyjny wspierający bibliotekę curses
+- System Operacyjny wspierający bibliotekę curses, np. dowolna dystrybucja Linuxa
+
+W celu **uruchomienia aplikacji**, konieczne jest wywołanie komendy w głównym folderze projektu
+```
+python3 main.py
+```
+Jeżeli aplikacja zawiesza się przy próbie zalogowania, najprawdopodobniej mongoengine nie jest w stanie połączyć się z bazą danych. Proszę zweryfikować że na komputerze uruchomiona jest usługa MongoDB i obecny użytkownik ma uprawnienia do korzystania z niej.
 
 Kod domyślne dla mongoengine parametry połączenia z bazą lokalną:
 `connect('flashcards')`, w niektórych przypadkach może być konieczna modyfikacja
@@ -36,7 +44,7 @@ Przechowuje dane logowania zarejestrowanych użytkowników:
 - hash hasła
 - informację do którego użytkownika należą dane
 
-Przykładowy dokument:
+**Przykładowy dokument:**
 ```json
 /* 1 */
 {
@@ -128,6 +136,7 @@ Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika. Każ
     - `history` - historię nauki fiszki, zawierającą jej stan (wartość atrybutu `state`) w momencie nauki oraz wybraną odpowiedź
     - `scheduled_for` - infrmację kiedy użytkownik zobaczy daną fiszkę (jeżeli będzie taka możliwość)
     - `state` - informacja o aktualnym statusie fiszki. Wartość odnosi się do wartości zmiennych globalnych `UNSEEN`, `SEEN` i `LEARNT`, zdefyniowanych z pliku [`model/Card.py`](model/Card.py)
+    - *nieistotny atrybut `_cls` związany z uruchomieniem dziedziczenia w mongoengine*
 
 **Przykładowy dokument:**
 ```json
