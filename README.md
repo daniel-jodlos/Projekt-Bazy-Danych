@@ -1,5 +1,5 @@
 # Opis projektu
-W ramach projektu stworzona została aplikacja konsolowa implementującą metodę fiszek. Technologie wykorzystane w projekcie to baza danych **MongoDB** i **Python3** z biblioteką **mongoengine**.
+W ramach projektu stworzona została aplikacja konsolowa implementującą metodę fiszek. Technologie wykorzystane w projekcie to baza danych **MongoDB** i **Python3** z biblioteką **mongoengine** oraz **ncurses**.
 
 Pojedyncza fiszka jest tradycyjnie kartą, z zapisanym pytaniem i poprawną odpowiedzią na odwrocie. Z założenia ucząć się tą metodą najpierw próbujemy odpowiedzieć na pytanie, później weryfikując z odpowiedzią. Metoda rozszerzona posiada dodatkowo mechanizm pozwalający na zaplanowanie kolejnego zobaczenia karty, na podstawie tego, czy znaliśmy odpowiedź w ostatniej iteracji oraz jej wcześniejszego stanu (*nowa*, *widziana*, *opanowana*). Stany zmieniają się na podstawie kilku ostatnich odpowiedzi, na poniższych zasadach:
 - fiszka dotychczas nie pokazana użytkownikowi jest *nowa*
@@ -53,17 +53,23 @@ metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
 
 **W projekcie możemy wyróżnić następujące elementy:**
 - pakiet `model` - model danych bazy danych
-    - `Card.py` - klasy opisujące pojedynczą fiszkę
+    - `Card.py` - klasy opisujące pojedynczą fiszkę, w tym:
+      - `SharedCard` - opisuje fiszkę udostępnioną, występuje jako dokument osadzony w talii udostępnionej
+      - `PrivateCard` - klasa dziedziczącą po SharedCard, nadająca kontekst konkretnego użytkownika i jego historii. Zawiera logikę modufikacji stanu.
     - `Deck.py` - klasy opisujące talie
+      - `SharedDeck` - talia udostępniona, zawiera zestaw instancji klasy `SharedCard`, oraz informacje związane z udostępnianiem talii. Może zostać przekształcona do `PrivateDeck` przy importowaniu talii do konta użytkownika.
+      - `PrivateDeck` - talia prywatna, reprezentująca talię zaimportowaną do konta. Zawiera zestaw instancji klasy `PrivateCard`. Odpowiada również za dobór przechowywanych fiszek.
     - `LoginCredentials.py` - model przechowujący dane logowania, oraz kod do logowania i rejestracji
     - `User.py` - model użytkownika
-- `DeckCreationWizard.py` - klasa pomocnicza przy tworzeniu i edycji talii
+- `DeckCreationWizard.py` - klasa pomocnicza przy tworzeniu i edycji talii, przykrywająca niewygodny interfejs zapisu do bazy wynikający z faktu, że obiekty klasy `PrivateDeck` są dokumentami osadzonymi.
 - `main.py` - główna logika aplikacji
-- `ui.py` - funkcje pomocnicze do interfejsu użytkownika
-- `example.csv` - przykładowa talia do zaimportowania
+- `ui.py` - funkcje pomocnicze do interfejsu użytkownika, logika wyświetlania
 
 ## Struktura bazy danych
-### Kolekcja `login_credentials`
+
+W projekcie wykorzystawana jest biblioteka mongoengine, będąca biblioteką typu ORM, więc struktura bazy danych odpowiada strukturze klas.
+
+### Kolekcja `login_credentials` (klasa [`LoginCredentials`](model/LoginCredentials.py))
 
 Przechowuje dane logowania zarejestrowanych użytkowników:
 - adres email, wykorzystywany jako identyfikator użytownika
@@ -81,20 +87,18 @@ Przechowuje dane logowania zarejestrowanych użytkowników:
 }
 ```
 
-### Kolekcja `shared_deck`
+### Kolekcja `shared_deck` (klasa [`SharedDeck`](model/Deck.py))
 
 Przechowuje talie udostępnione przez użytkowników. Każda talia zawiera:
-- informacje o autorze (nazwę użytkownika oraz jego id)
-- nazwę talii
-- opis talii
-- datę dodania
-- listę fiszek zawartą w talii (pole `cards`)
-
-Każda fiszka przechowywana w liście zawiera następujące atrybuty:
-- `dc_id` - unikalny identyfikator fiszki w kontekście talii
-- `question` - pytanie zawarte w fiszcze
-- `answer` - poprawna odpowiedź na pytanie
-- *`_cls` - wartośc nieistotna, atrybut wygenerowany automatycznie przez mongoengine, związany z uruchomieniem mechanizmu dziedzienia*
+- `author_id` oraz `author_name` - informacje o autorze, odpowiednio jego id i nazwa użytkownika
+- `name` - nazwę talii
+- `description` - opis talii
+- `created` - datę utworzenia
+- `cards` - listę fiszek zawartą w talii, instancje klasy [`SharedCard`](model/Card.py)
+  - `dc_id` - unikalny identyfikator fiszki w kontekście talii
+  - `question` - pytanie zawarte w fiszcze
+  - `answer` - poprawna odpowiedź na pytanie
+  - *`_cls` - wartośc nieistotna, atrybut wygenerowany automatycznie przez mongoengine, związany z uruchomieniem mechanizmu dziedzienia*
 
 **Przykładowy dokument:**
 ```json
@@ -147,7 +151,7 @@ Każda fiszka przechowywana w liście zawiera następujące atrybuty:
 }
 ```
 
-### Kolekcja `user`
+### Kolekcja `user` (klasa [`user`](model/User.py))
 
 Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika. Każdy dokument jest unikalny dla dokładnie jednego z użytkowników. Zawiera:
 - `username` - nazwę użytkownika do którego się odnosi
@@ -155,13 +159,13 @@ Przechowuje informacje przekazywane do klienta po zalogowaniu użytkownika. Każ
 - `decks` - listę talii utworzonych lub zaimportowanych do konta użytkownika. Każdy element listy zawiera:
   - `name` - nazwę talii
   - `size` - rozmiar
-  - `cards` - listę fiszek zawartych w talii. Każda z nich może powstać z fiszki przechowywanej w talii współdzielonej i każda zawiera:
+  - `cards` - listę fiszek zawartych w talii, instancje klasy [`PrivateCard`](model/Card.py). Każda z nich może powstać z fiszki przechowywanej w talii współdzielonej i każda zawiera:
     - `dc_id` - unikalny numer identyfikacyjny w obrębie talii
     - `question` - pytanie
     - `answer` - poprawną odpowiedź na pytanie
     - `history` - historię nauki fiszki, zawierającą jej stan (wartość atrybutu `state`) w momencie nauki oraz wybraną odpowiedź
-    - `scheduled_for` - infrmację kiedy użytkownik zobaczy daną fiszkę (jeżeli będzie taka możliwość)
-    - `state` - informacja o aktualnym statusie fiszki. Wartość odnosi się do wartości zmiennych globalnych `UNSEEN`, `SEEN` i `LEARNT`, zdefyniowanych z pliku [`model/Card.py`](model/Card.py)
+    - `scheduled_for` - infrmację kiedy użytkownik powinien zobaczyć daną fiszkę (jeżeli będzie to możliwe)
+    - `state` - informacja o aktualnym stanie fiszki. Wartość odnosi się do wartości zmiennych globalnych `UNSEEN`, `SEEN` i `LEARNT`, zdefyniowanych z pliku [`model/Card.py`](model/Card.py)
     - *nieistotny atrybut `_cls` związany z uruchomieniem dziedziczenia w mongoengine*
 
 **Przykładowy dokument:**
