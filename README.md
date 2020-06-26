@@ -14,7 +14,7 @@ Fiszki mogą być zbierane w talie, czyli inaczej zbiory.
 - **tworzenie i modyfikacja talii fiszek**
 - **mechanizm nauki**
 
-    W pierwszym kroku aplikacja pobiera zestaw fiszek zaplanowanych na dzisiejszy dzień, oraz zestaw nowych kart, jeżeli takie istnieją. Następnie każda z fiszek zostaje pokazana użytkownikowi, który po odkryciu odpowiedzi jest proszony o udzielenie informacji zwrotnej. Jeżeli jest negatywna, fiszka trafia na koniec kolejki, w przeciwnym wypadku zostaje zaplanowana na dzień w przyszłości, według reguł zdefiniowanych w zmiennej [`FEEDBACK_SETTINGS`](model/Card.py). W tym miejscu są również dokonywane zmiany stanów opisane wyżej.
+    W pierwszym kroku aplikacja pobiera zestaw fiszek zaplanowanych na dzisiejszy dzień, oraz zestaw nowych kart, jeżeli takie istnieją. Następnie każda z fiszek zostaje pokazana użytkownikowi, który po odkryciu odpowiedzi jest proszony o udzielenie informacji zwrotnej. Jeżeli jest negatywna, fiszka trafia na koniec kolejki, w przeciwnym wypadku zaplanowana na dzień w przyszłości, według reguł zdefiniowanych w zmiennej [`FEEDBACK_SETTINGS`](model/Card.py). W tym miejscu są również dokonywane zmiany stanów opisane wyżej.
 
 - **możliwość udostępniania swoich talii społeczności, ich wyszukiwania i importowania do swojego konta**
   
@@ -22,7 +22,7 @@ Fiszki mogą być zbierane w talie, czyli inaczej zbiory.
 
   Importowanie odbywa się po wyszukaniu talii. Wyszukiwanie odbywa się poprzez sprawdzenie czy zapytanie jest podciągiem nazwy, z pominięciem wielkości znaków. Talia po zaimportowaniu do konta użytkownika zostaje roszerzona o informacje unikalne dla użytkownika i nie różni się niczym od tej utworzonej samodzielnie.
 
-*Oryginalny opis projektu przekazany na etapie propozycji znajduje się w pliku pliku [`description.md`](description.md). Aplikacja została zaimplementowana w większości zgodnie z oryginalnymi założeniami.*
+*Oryginalny opis projektu przekazany na etapie propozycji znajduje się w pliku pliku [`description.md`]*
 
 ## Architektura aplikacji
 Aplikacja łączy się bezpośrednio z bazą danych.
@@ -60,7 +60,7 @@ metody połączenia w [pliku `model/__init__.py`](model/__init__.py).
       - `SharedDeck` - talia udostępniona, zawiera zestaw instancji klasy `SharedCard`, oraz informacje związane z udostępnianiem talii. Może zostać przekształcona do `PrivateDeck` przy importowaniu talii do konta użytkownika.
       - `PrivateDeck` - talia prywatna, reprezentująca talię zaimportowaną do konta. Zawiera zestaw instancji klasy `PrivateCard`. Odpowiada również za dobór przechowywanych fiszek.
     - `LoginCredentials.py` - model przechowujący dane logowania, oraz kod do logowania i rejestracji
-    - `User.py` - model użytkownika
+    - `User.py` - model danych o użytkowniku, w tym talie zaimportowane do jego konta
 - `DeckCreationWizard.py` - klasa pomocnicza przy tworzeniu i edycji talii, przykrywająca niewygodny interfejs zapisu do bazy wynikający z faktu, że obiekty klasy `PrivateDeck` są dokumentami osadzonymi.
 - `main.py` - główna logika aplikacji
 - `ui.py` - funkcje pomocnicze do interfejsu użytkownika, logika wyświetlania
